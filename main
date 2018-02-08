@@ -1,1 +1,92 @@
-# ball
+<!DOCTYPE html>
+<html>
+<body>
+</body>
+
+<script src="http://threejs.org/build/three.min.js"></script>
+
+<script>
+window.onload = init
+document.addEventListener("keypress", rotate)
+
+var renderer, scene, camera //initializing global variables
+var fov = 30
+var ar = 800/600
+var camera, scene, ball, hook, string, vector
+var t = 0, damp = 1, camang = 0
+
+
+
+function init()
+{
+	renderer = new THREE.WebGLRenderer()
+	renderer.setSize(800, 600)
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+	document.body.appendChild(renderer.domElement)
+	scene = new THREE.Scene()
+	// field of view (angle), aspect ratio, near, far
+	camera = new THREE.PerspectiveCamera(30, 800/600, 0.1, 1000)  
+	camera.position.set(0, 50, 200)
+	camera.lookAt(new THREE.Vector3(0, 0, 0))
+
+	hook = new THREE.Object3D()
+	ball = new THREE.Mesh(new THREE.SphereGeometry(5, 32, 32), new THREE.MeshPhongMaterial({color:0xFF0000}))
+	ball.castShadow = true;
+	var wall = new THREE.Mesh(new THREE.PlaneGeometry(800, 800), new THREE.MeshStandardMaterial({color : 0xdddddd}))
+	wall.recieveShadow = true;
+	var floor = new THREE.Mesh(new THREE.PlaneGeometry(800, 800), new THREE.MeshStandardMaterial({color : 0xdddddd}))
+	floor.receiveShadow = true;
+	var spotLight = new THREE.SpotLight( 0xffffff );
+	spotLight.position.set(100, 100, 100)
+	spotLight.castShadow = true;
+	
+	var geometry = new THREE.Geometry();
+	geometry.vertices.push(new THREE.Vector3(0, -50, 0));
+	geometry.vertices.push(new THREE.Vector3(0, 0, 0));
+	string = new THREE.Line(geometry, new THREE.MeshBasicMaterial({color : 0x000000}));
+
+	scene.add( spotLight );
+	scene.add(hook)
+	hook.position.y += 50
+	
+	hook.add(string)
+	scene.add(ball)
+	scene.add(wall)
+	scene.add(floor)
+	
+	floor.rotation.x -= Math.PI/2 //rotating and translating floor into position
+	floor.position.y -= 10
+	wall.position.z -= 50
+		
+	renderer.setClearColor(0xdddddd)
+	renderer.render(scene, camera)
+	swing()
+	
+}
+
+function swing()
+{	
+	requestAnimationFrame(swing)
+	string.rotation.z = (Math.PI/2 + damp*((Math.PI/4)*Math.cos(t) + (3*Math.PI)/2));
+	
+	ball.position.x = 50*Math.cos(string.rotation.z-Math.PI/2);
+	ball.position.y = 50*Math.sin(string.rotation.z-Math.PI/2) + 50;
+	
+	t += .1;
+	
+	renderer.setClearColor(0xdddddd)
+	renderer.render(scene, camera)
+		
+}
+
+function rotate()
+{
+	camera.position.x = 200*Math.sin(camang)
+	camera.position.z = 200*Math.cos(camang)
+	camang+=.1
+	camera.lookAt(new THREE.Vector3(0, 0, 0))
+}
+	
+</script>
+</html>
