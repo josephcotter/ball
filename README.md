@@ -1,1 +1,1 @@
-This is a 3-D animation of a swinging pendulum that I wrote in Javascript using the Three.js library. It uses the cosine function to model a pendulum's movement. Pressing any on the animation window will rotate the camera
+This is a 3-D animation of a swinging pendulum that I wrote in Javascript using the Three.js library. It uses the cosine function to model a pendulum's movement. Pressing any key on the animation window will rotate the camera
